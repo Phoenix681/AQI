@@ -1,6 +1,6 @@
 import React from 'react';
 import ForecastChart from '../components/ForecastChart';
-import HistoricalGraph from '../components/HistoricalGraph';
+import HourlyForecastChart from '../components/HourlyForecastChart';
 import forecastData from '../data/forecastData.json';
 
 const getAqiLevel = (aqi) => {
@@ -12,29 +12,38 @@ const getAqiLevel = (aqi) => {
   return { label: 'Hazardous', color: 'bg-pink-700', tip: 'Health alert: avoid all outdoor exposure.' };
 };
 
+const getNextThreeDays = (data) => data.slice(0, 3);
+
 const ForecastPage = () => {
-  const peak = forecastData.reduce((max, d) => (d.aqi > max.aqi ? d : max), forecastData[0]);
-  const peakLevel = getAqiLevel(peak.aqi);
+  const next3Days = getNextThreeDays(forecastData);
+  const today = forecastData[0]; // Assuming first entry is current day
+  const todayLevel = getAqiLevel(today.aqi);
 
   return (
     <div className="p-6 space-y-10 max-w-6xl mx-auto bg-white text-gray-800">
       <h1 className="text-3xl font-bold text-blue-600">Air Quality Forecast & History</h1>
 
-      {/* Forecast Summary */}
+      {/* Hourly Forecast Chart */}
+      <div className="bg-white rounded-2xl p-4 shadow-md border">
+        <HourlyForecastChart />
+      </div>
+
+      {/* Summary for current day */}
       <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-800 p-4 rounded-lg shadow">
         <p>
-          <strong>Forecast Summary:</strong> Air quality will remain mostly{' '}
-          <span className="font-semibold">{getAqiLevel(forecastData[1].aqi).label}</span> this week. A spike is expected on{' '}
-          <strong>{peak.date}</strong> with AQI reaching <strong>{peak.aqi}</strong> ({peakLevel.label}).
+          <strong>Today&apos;s Air Quality:</strong> {today.date} with an AQI of <strong>{today.aqi}</strong> (
+          <span className="font-semibold">{todayLevel.label}</span>).
+          <br />
+          <em>{todayLevel.tip}</em>
         </p>
       </div>
 
-      {/* Forecast Chart */}
+      {/* 3-Day Forecast Chart */}
       <div className="bg-white rounded-2xl p-4 shadow-md border">
-        <ForecastChart />
+        <ForecastChart data={next3Days} />
       </div>
 
-      {/* AQI Table */}
+      {/* 3-Day AQI Table with Health Tips */}
       <div className="overflow-x-auto bg-white rounded-2xl shadow-md border">
         <table className="min-w-full text-sm text-left">
           <thead className="bg-blue-50 text-blue-700 uppercase tracking-wide">
@@ -46,7 +55,7 @@ const ForecastPage = () => {
             </tr>
           </thead>
           <tbody>
-            {forecastData.map((entry, index) => {
+            {next3Days.map((entry, index) => {
               const { label, color, tip } = getAqiLevel(entry.aqi);
               return (
                 <tr key={index} className="border-t hover:bg-blue-50 transition">
@@ -64,13 +73,9 @@ const ForecastPage = () => {
           </tbody>
         </table>
       </div>
-
-      {/* Historical Graph */}
-      <div className="bg-white rounded-2xl p-4 shadow-md border">
-        <HistoricalGraph />
-      </div>
     </div>
   );
 };
 
 export default ForecastPage;
+

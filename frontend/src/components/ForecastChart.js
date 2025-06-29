@@ -2,12 +2,12 @@ import React from 'react';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer
 } from 'recharts';
-import data from '../data/forecastData.json';
+import defaultData from '../data/forecastData.json';
 
-const ForecastChart = () => {
+const ForecastChart = ({ data }) => {
   return (
     <div className="w-full h-full bg-white p-6 rounded-lg shadow-md border border-blue-100">
-      <h2 className="text-xl font-bold text-blue-700 mb-4">7-Day AQI Forecast</h2>
+      <h2 className="text-xl font-bold text-blue-700 mb-4">3-Day AQI Forecast</h2>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -21,5 +21,10 @@ const ForecastChart = () => {
   );
 };
 
+ForecastChart.defaultProps = {
+  data: defaultData,
+};
+
 export default ForecastChart;
+
 

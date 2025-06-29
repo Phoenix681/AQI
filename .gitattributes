@@ -1,0 +1,9 @@
+# Enforce LF line endings for code files to keep consistency across OSes
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+
+# For other text files, use default auto conversion
+* text=auto

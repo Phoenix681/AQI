@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import SettingsModal from '../components/SettingsModal'; // make sure path is correct
 
 const HomePage = () => {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col">
       {/* Navbar */}
@@ -9,13 +12,16 @@ const HomePage = () => {
         <h1 className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition">
           <Link to="/">Aeris</Link>
         </h1>
-        <div>
-          <Link to="/login">
-            <button className="px-4 py-2 border border-blue-500 text-blue-600 rounded hover:bg-blue-50 transition font-medium">
-              Login
-            </button>
-          </Link>
-        </div>
+
+        {/* Settings Button (Gear) */}
+        <button
+          onClick={() => setIsSettingsOpen(true)}
+          className="text-blue-600 hover:text-blue-800 text-xl"
+          aria-label="Settings"
+        >
+          ⚙️
+        </button>
+
       </header>
 
       {/* Hero Section */}
@@ -55,10 +61,14 @@ const HomePage = () => {
       <footer className="text-center text-sm text-gray-500 p-4 mt-auto">
         &copy; {new Date().getFullYear()} <span className="text-blue-600 font-semibold">Aeris</span>. All rights reserved.
       </footer>
+
+      {/* Settings Modal */}
+      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
     </div>
   );
 };
 
 export default HomePage;
+
 
 
