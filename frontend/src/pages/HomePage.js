@@ -32,7 +32,7 @@ const HomePage = () => {
         <p className="text-lg md:text-xl text-gray-600 max-w-xl mb-6">
           Track real-time air quality, get personalized health advice, and plan your outdoor activities with confidence.
         </p>
-        <Link to="/chat">
+        <Link to="/home">
           <button className="text-white bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl text-lg font-semibold shadow transition">
             Get Started →
           </button>
