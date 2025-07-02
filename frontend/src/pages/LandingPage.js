@@ -1,16 +1,24 @@
-import React from 'react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import React, { useState } from 'react';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from 'recharts';
 
 const AirQualityLanding = () => {
-  const location = { latitude: 28.6139, longitude: 77.2090 }; // Delhi
-  const city = 'Delhi';
-  const aqiData = 85; // Moderate
+  const [searchLocation, setSearchLocation] = useState('');
+  const [displayLocation, setDisplayLocation] = useState('');
+  const aqiData = 85;
   const weatherData = {
     temperature_2m: 32,
     relative_humidity_2m: 48,
     precipitation: 0.2,
     visibility: 5000,
-    wind_direction_10m: 90
+    wind_direction_10m: 90,
   };
 
   const historicalAQI = [
@@ -22,67 +30,105 @@ const AirQualityLanding = () => {
   ];
 
   const interpretAQI = (aqi) => {
-    if (aqi <= 50) return "Good";
-    if (aqi <= 100) return "Moderate";
-    if (aqi <= 150) return "Unhealthy for Sensitive Groups";
-    if (aqi <= 200) return "Unhealthy";
-    if (aqi <= 300) return "Very Unhealthy";
-    return "Hazardous";
+    if (aqi <= 50) return 'Good';
+    if (aqi <= 100) return 'Moderate';
+    if (aqi <= 150) return 'Unhealthy for Sensitive Groups';
+    if (aqi <= 200) return 'Unhealthy';
+    if (aqi <= 300) return 'Very Unhealthy';
+    return 'Hazardous';
   };
 
-  const aqiColor = "text-blue-600";
+  const handleLocateMe = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        alert(`Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`);
+        // Replace with actual location API usage
+      },
+      (error) => {
+        alert('Location access denied or unavailable.');
+      }
+    );
+  };
+
+  // Handle Enter key in search input
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      setDisplayLocation(searchLocation);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-blue-50 px-6 py-12 font-sans flex flex-col items-center justify-start space-y-10">
-      {/* Separate Tab Heading */}
-      <div className="w-full max-w-6xl bg-white rounded-3xl p-10 shadow-2xl mb-6">
-        <h1 className={`text-5xl font-bold text-left ${aqiColor}`}>Air Quality</h1>
-      </div>
+    <div className="p-6 space-y-10 max-w-6xl mx-auto bg-white text-gray-800">
+      {/* Header with title, search, locate button */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <h1 className="text-3xl font-bold text-blue-600">Air Quality Summary</h1>
 
-      {/* Data Section */}
-      <div className="w-full max-w-6xl bg-white rounded-3xl p-10 shadow-2xl">
-        <div className="text-3xl text-slate-700 mb-10 pl-1">{city}</div>
-
-        <div className="mb-10">
-          <div className="text-4xl text-slate-600 mb-2">AQI</div>
-          <div className="text-8xl font-bold text-blue-600">{aqiData}</div>
-          <div className="text-3xl font-semibold text-blue-600 mt-2">{interpretAQI(aqiData)}</div>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-10">
-          <div className="bg-gray-100 p-6 rounded-2xl shadow-lg">
-            <div className={`text-2xl font-semibold mb-2 ${aqiColor}`}>Temperature</div>
-            <div className="text-3xl font-bold text-black">{weatherData.temperature_2m}°C</div>
-          </div>
-          <div className="bg-gray-100 p-6 rounded-2xl shadow-lg">
-            <div className={`text-2xl font-semibold mb-2 ${aqiColor}`}>Humidity</div>
-            <div className="text-3xl font-bold text-black">{weatherData.relative_humidity_2m}%</div>
-          </div>
-          <div className="bg-gray-100 p-6 rounded-2xl shadow-lg">
-            <div className={`text-2xl font-semibold mb-2 ${aqiColor}`}>Precipitation</div>
-            <div className="text-3xl font-bold text-black">{weatherData.precipitation} mm</div>
-          </div>
-          <div className="bg-gray-100 p-6 rounded-2xl shadow-lg">
-            <div className={`text-2xl font-semibold mb-2 ${aqiColor}`}>Wind Direction</div>
-            <div className="text-3xl font-bold text-black">{weatherData.wind_direction_10m}°</div>
-          </div>
-          <div className="bg-gray-100 p-6 rounded-2xl shadow-lg">
-            <div className={`text-2xl font-semibold mb-2 ${aqiColor}`}>Visibility</div>
-            <div className="text-3xl font-bold text-black">{weatherData.visibility} m</div>
-          </div>
+        <div className="flex items-center gap-3 flex-wrap md:justify-end">
+          <input
+            type="text"
+            value={searchLocation}
+            onChange={(e) => setSearchLocation(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
+            placeholder="Search location..."
+            className="px-4 py-2 text-sm border border-gray-300 rounded-md shadow-sm w-60"
+          />
+          <button
+            onClick={handleLocateMe}
+            className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow"
+          >
+            Locate Me
+          </button>
         </div>
       </div>
 
-      {/* Historical AQI Trend Graph */}
-      <div className="w-full max-w-6xl bg-white rounded-3xl p-10 shadow-2xl">
-        <h2 className="text-3xl font-bold text-blue-600 mb-6">Historical AQI Trend (Last 5 Days)</h2>
+      {/* AQI Info Card */}
+      <div className="bg-white rounded-2xl p-6 shadow-md border grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">{displayLocation}</h2>
+          <div className="text-6xl font-bold text-blue-600">{aqiData}</div>
+          <div className="text-2xl font-medium mt-2">{interpretAQI(aqiData)}</div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
+          <div className="bg-gray-100 rounded-xl p-4">
+            <div className="text-sm text-gray-500">Temp</div>
+            <div className="text-lg font-semibold">{weatherData.temperature_2m}°C</div>
+          </div>
+          <div className="bg-gray-100 rounded-xl p-4">
+            <div className="text-sm text-gray-500">Humidity</div>
+            <div className="text-lg font-semibold">{weatherData.relative_humidity_2m}%</div>
+          </div>
+          <div className="bg-gray-100 rounded-xl p-4">
+            <div className="text-sm text-gray-500">Precipitation</div>
+            <div className="text-lg font-semibold">{weatherData.precipitation} mm</div>
+          </div>
+          <div className="bg-gray-100 rounded-xl p-4">
+            <div className="text-sm text-gray-500">Wind</div>
+            <div className="text-lg font-semibold">{weatherData.wind_direction_10m}°</div>
+          </div>
+          <div className="bg-gray-100 rounded-xl p-4 col-span-2 sm:col-span-1">
+            <div className="text-sm text-gray-500">Visibility</div>
+            <div className="text-lg font-semibold">{weatherData.visibility} m</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Historical AQI Graph */}
+      <div className="bg-white rounded-2xl p-6 shadow-md border">
+        <h2 className="text-xl font-bold text-blue-700 mb-4">Historical AQI Trend (Last 5 Days)</h2>
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={historicalAQI} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+          <LineChart data={historicalAQI}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
-            <Line type="monotone" dataKey="aqi" stroke="#3b82f6" strokeWidth={3} dot={{ r: 5 }} />
+            <Line
+              type="monotone"
+              dataKey="aqi"
+              stroke="#3b82f6"
+              strokeWidth={3}
+              dot={{ r: 5 }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -91,3 +137,4 @@ const AirQualityLanding = () => {
 };
 
 export default AirQualityLanding;
+
