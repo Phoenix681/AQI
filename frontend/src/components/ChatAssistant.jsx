@@ -6,7 +6,7 @@ const ChatAssistant = () => {
       {/* Header */}
       <div className="flex items-center gap-4 bg-white shadow px-6 py-4 border-b">
         <img
-          src="https://api.dicebear.com/7.x/open-peeps/svg?seed=user"
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKIXypXMwXgQ-XN42ZQksWbj8vZjtJWZPH0K63-MrYWmB2YcaNjeFzImXswC6cmwKzUDY&usqp=CAU"
           alt="Avatar"
           className="w-12 h-12 rounded-full border border-blue-200"
         />
